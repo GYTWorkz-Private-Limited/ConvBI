@@ -573,7 +573,7 @@ Check application logs for detailed error information:
 ## 📁 Project Structure
 
 ```
-Text2SQL/                           # Project root (this directory)
+ConvBI/                           # Project root (this directory)
 ├── convBI/                         # Core ConvBI module
 │   ├── agents/                     # LangGraph agents
 │   │   ├── intent.py              # Intent classification
@@ -669,10 +669,9 @@ For questions about licensing or attribution, please open an issue.
 ## 🆘 Support
 
 For issues and questions:
-1. Check the [Troubleshooting](#troubleshooting) section
-2. Review application logs
-3. Check Azure OpenAI, PostgreSQL, Redis, and Qdrant connectivity
-4. Open an issue with detailed error messages and logs
+1. Review application logs
+2. Check Azure OpenAI, PostgreSQL, Redis, and Qdrant connectivity
+3. Open an issue with detailed error messages and logs
 
 ---
 
