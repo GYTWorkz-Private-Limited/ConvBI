@@ -636,7 +636,27 @@ Text2SQL/                           # Project root (this directory)
 
 ## 📄 License
 
-[Add your license information here]
+This project is available for use by anyone, provided that you feature and credit this project in your work. 
+
+**Terms of Use:**
+- ✅ You are free to use, modify, and distribute this software
+- ✅ You are free to use this software for commercial purposes
+- ✅ You are free to create derivative works
+- ⚠️ **You must feature and credit this project** in any work that uses or is based on this codebase
+
+**Attribution Requirements:**
+When using this project, please include:
+- A clear mention of ConvBI in your project documentation
+- A link back to this repository
+- Credit in any publications, presentations, or public-facing materials that utilize this code
+
+**Example Attribution:**
+```
+This project uses ConvBI - Conversational Business Intelligence System
+https://github.com/[your-org]/ConvBI
+```
+
+For questions about licensing or attribution, please open an issue.
 
 ## 🆘 Support
 
