@@ -1,0 +1,345 @@
+{
+  "schemas": {
+    "public": {
+      "tables": [
+        {
+          "table_name": "users",
+          "description": "Stores user account information including personal details and authentication data",
+          "primary_key": ["user_id"],
+          "foreign_keys": [
+            {
+              "column": "organization_id",
+              "references": {
+                "table": "organizations",
+                "column": "org_id"
+              }
+            }
+          ],
+          "columns": [
+            {
+              "column_name": "user_id",
+              "data_type": "uuid",
+              "description": "Unique identifier for each user"
+            },
+            {
+              "column_name": "email",
+              "data_type": "varchar(255)",
+              "description": "User email address used for login"
+            },
+            {
+              "column_name": "first_name",
+              "data_type": "varchar(100)",
+              "description": "User's first name"
+            },
+            {
+              "column_name": "last_name",
+              "data_type": "varchar(100)",
+              "description": "User's last name"
+            },
+            {
+              "column_name": "organization_id",
+              "data_type": "uuid",
+              "description": "Reference to the organization the user belongs to"
+            },
+            {
+              "column_name": "created_at",
+              "data_type": "timestamp",
+              "description": "Timestamp when the user account was created"
+            },
+            {
+              "column_name": "is_active",
+              "data_type": "boolean",
+              "description": "Whether the user account is currently active"
+            }
+          ],
+          "indexes": [
+            {
+              "index_name": "idx_users_email",
+              "index_type": "unique",
+              "columns": ["email"],
+              "description": "Unique index on email for fast lookups and uniqueness constraint"
+            },
+            {
+              "index_name": "idx_users_org_id",
+              "index_type": "btree",
+              "columns": ["organization_id"],
+              "description": "B-tree index on organization_id for efficient filtering and joins"
+            },
+            {
+              "index_name": "idx_users_created_at",
+              "index_type": "btree",
+              "columns": ["created_at"],
+              "description": "Index on created_at for date range queries"
+            },
+            {
+              "index_name": "idx_users_name_composite",
+              "index_type": "btree",
+              "columns": ["last_name", "first_name"],
+              "description": "Composite index for name-based searches"
+            }
+          ]
+        },
+        {
+          "table_name": "organizations",
+          "description": "Contains organization information and settings",
+          "primary_key": ["org_id"],
+          "foreign_keys": [],
+          "columns": [
+            {
+              "column_name": "org_id",
+              "data_type": "uuid",
+              "description": "Unique identifier for each organization"
+            },
+            {
+              "column_name": "org_name",
+              "data_type": "varchar(255)",
+              "description": "Name of the organization"
+            },
+            {
+              "column_name": "industry",
+              "data_type": "varchar(100)",
+              "description": "Industry sector the organization operates in"
+            },
+            {
+              "column_name": "created_at",
+              "data_type": "timestamp",
+              "description": "Timestamp when the organization was created"
+            }
+          ],
+          "indexes": [
+            {
+              "index_name": "idx_organizations_name",
+              "index_type": "btree",
+              "columns": ["org_name"],
+              "description": "Index on organization name for search operations"
+            }
+          ]
+        }
+      ]
+    },
+    "analytics": {
+      "tables": [
+        {
+          "table_name": "events",
+          "description": "Tracks user events and interactions for analytics purposes",
+          "primary_key": ["event_id"],
+          "foreign_keys": [
+            {
+              "column": "user_id",
+              "references": {
+                "table": "users",
+                "column": "user_id"
+              }
+            }
+          ],
+          "columns": [
+            {
+              "column_name": "event_id",
+              "data_type": "uuid",
+              "description": "Unique identifier for each event"
+            },
+            {
+              "column_name": "user_id",
+              "data_type": "uuid",
+              "description": "Reference to the user who triggered the event"
+            },
+            {
+              "column_name": "event_type",
+              "data_type": "varchar(100)",
+              "description": "Type of event (e.g., 'page_view', 'click', 'purchase')"
+            },
+            {
+              "column_name": "event_data",
+              "data_type": "jsonb",
+              "description": "Additional event data stored as JSON"
+            },
+            {
+              "column_name": "timestamp",
+              "data_type": "timestamp",
+              "description": "When the event occurred"
+            }
+          ],
+          "indexes": [
+            {
+              "index_name": "idx_events_user_id",
+              "index_type": "btree",
+              "columns": ["user_id"],
+              "description": "Index on user_id for efficient user event queries"
+            },
+            {
+              "index_name": "idx_events_timestamp",
+              "index_type": "btree",
+              "columns": ["timestamp"],
+              "description": "Index on timestamp for time-based event queries"
+            },
+            {
+              "index_name": "idx_events_type_timestamp",
+              "index_type": "btree",
+              "columns": ["event_type", "timestamp"],
+              "description": "Composite index for filtering by event type and time range"
+            },
+            {
+              "index_name": "idx_events_data_gin",
+              "index_type": "gin",
+              "columns": ["event_data"],
+              "description": "GIN index on JSONB event_data for efficient JSON queries"
+            }
+          ]
+        },
+        {
+          "table_name": "reports",
+          "description": "Stores generated analytics reports and their metadata",
+          "primary_key": ["report_id"],
+          "foreign_keys": [
+            {
+              "column": "org_id",
+              "references": {
+                "table": "organizations",
+                "column": "org_id"
+              }
+            }
+          ],
+          "columns": [
+            {
+              "column_name": "report_id",
+              "data_type": "uuid",
+              "description": "Unique identifier for each report"
+            },
+            {
+              "column_name": "org_id",
+              "data_type": "uuid",
+              "description": "Reference to the organization that owns the report"
+            },
+            {
+              "column_name": "report_name",
+              "data_type": "varchar(255)",
+              "description": "Name of the report"
+            },
+            {
+              "column_name": "report_type",
+              "data_type": "varchar(50)",
+              "description": "Type of report (e.g., 'daily', 'weekly', 'monthly')"
+            },
+            {
+              "column_name": "generated_at",
+              "data_type": "timestamp",
+              "description": "When the report was generated"
+            },
+            {
+              "column_name": "status",
+              "data_type": "varchar(20)",
+              "description": "Status of the report (e.g., 'pending', 'completed', 'failed')"
+            }
+          ],
+          "indexes": [
+            {
+              "index_name": "idx_reports_org_id",
+              "index_type": "btree",
+              "columns": ["org_id"],
+              "description": "Index on org_id for organization-specific report queries"
+            },
+            {
+              "index_name": "idx_reports_generated_at",
+              "index_type": "btree",
+              "columns": ["generated_at"],
+              "description": "Index on generated_at for time-based report queries"
+            },
+            {
+              "index_name": "idx_reports_status",
+              "index_type": "btree",
+              "columns": ["status"],
+              "description": "Index on status for filtering reports by status"
+            }
+          ]
+        }
+      ]
+    },
+    "safety": {
+      "tables": [
+        {
+          "table_name": "incidents",
+          "description": "Records safety incidents and accidents with detailed information",
+          "primary_key": ["incident_id"],
+          "foreign_keys": [
+            {
+              "column": "reported_by",
+              "references": {
+                "table": "users",
+                "column": "user_id"
+              }
+            }
+          ],
+          "columns": [
+            {
+              "column_name": "incident_id",
+              "data_type": "uuid",
+              "description": "Unique identifier for each incident"
+            },
+            {
+              "column_name": "incident_type",
+              "data_type": "varchar(100)",
+              "description": "Type of incident (e.g., 'injury', 'near_miss', 'property_damage')"
+            },
+            {
+              "column_name": "severity",
+              "data_type": "varchar(20)",
+              "description": "Severity level (e.g., 'low', 'medium', 'high', 'critical')"
+            },
+            {
+              "column_name": "location",
+              "data_type": "varchar(255)",
+              "description": "Location where the incident occurred"
+            },
+            {
+              "column_name": "reported_by",
+              "data_type": "uuid",
+              "description": "User who reported the incident"
+            },
+            {
+              "column_name": "reported_at",
+              "data_type": "timestamp",
+              "description": "When the incident was reported"
+            },
+            {
+              "column_name": "description",
+              "data_type": "text",
+              "description": "Detailed description of the incident"
+            },
+            {
+              "column_name": "status",
+              "data_type": "varchar(20)",
+              "description": "Current status (e.g., 'open', 'investigating', 'resolved', 'closed')"
+            }
+          ],
+          "indexes": [
+            {
+              "index_name": "idx_incidents_reported_by",
+              "index_type": "btree",
+              "columns": ["reported_by"],
+              "description": "Index on reported_by for user-specific incident queries"
+            },
+            {
+              "index_name": "idx_incidents_reported_at",
+              "index_type": "btree",
+              "columns": ["reported_at"],
+              "description": "Index on reported_at for time-based incident queries"
+            },
+            {
+              "index_name": "idx_incidents_severity_status",
+              "index_type": "btree",
+              "columns": ["severity", "status"],
+              "description": "Composite index for filtering incidents by severity and status"
+            },
+            {
+              "index_name": "idx_incidents_location",
+              "index_type": "btree",
+              "columns": ["location"],
+              "description": "Index on location for location-based incident queries"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+

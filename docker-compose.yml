@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # FastAPI Text2SQL Application
+  text2sql-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: text2sql-api
+    ports:
+      - "8000:8000"
+    environment:
+      # Server Configuration
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      
+      # Redis Configuration (Docker service)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_DB=${REDIS_DB:-0}
+      
+      # Qdrant Configuration (Docker service)
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_API_KEY=${QDRANT_API_KEY:-}
+      
+      # PostgreSQL Configuration (External - from .env)
+      - QUERY_DB_HOST=${QUERY_DB_HOST}
+      - QUERY_DB_PORT=${QUERY_DB_PORT:-5432}
+      - QUERY_DB_NAME=${QUERY_DB_NAME}
+      - QUERY_DB_USER=${QUERY_DB_USER}
+      - QUERY_DB_PASSWORD=${QUERY_DB_PASSWORD}
+      
+      # Azure OpenAI Configuration (External - from .env)
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_DEPLOYMENT_NAME=${AZURE_OPENAI_DEPLOYMENT_NAME}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION:-2024-02-15-preview}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      
+      # Cohere Configuration (Optional - from .env)
+      - COHERE_API_KEY=${COHERE_API_KEY:-}
+      - COHERE_RERANK_MODEL=${COHERE_RERANK_MODEL:-rerank-v3.5}
+      - COHERE_RERANK_TOP_K=${COHERE_RERANK_TOP_K:-10}
+      
+      # Langfuse Configuration (Optional - from .env)
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
+    volumes:
+      - ./semantics:/app/semantics
+    depends_on:
+      - redis
+      - qdrant
+    networks:
+      - text2sql-network
+    restart: unless-stopped
+
+  # Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: text2sql-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - text2sql-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: text2sql-qdrant
+    ports:
+      - "6333:6333"  # HTTP API
+      - "6334:6334"  # gRPC
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks:
+      - text2sql-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data:
+    driver: local
+  qdrant-data:
+    driver: local
+
+networks:
+  text2sql-network:
+    driver: bridge
+

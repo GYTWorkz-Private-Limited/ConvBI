@@ -1,0 +1,36 @@
+# Core FastAPI and server dependencies
+fastapi==0.116.1
+uvicorn==0.35.0
+python-dotenv==1.1.1
+pydantic==2.11.7
+
+# LangChain and LangGraph dependencies
+langchain==0.3.27
+langchain-core>=0.3.72,<1.0.0
+langchain-openai==0.3.28
+langgraph==0.6.3
+
+# Azure OpenAI (for LLM)
+openai==1.98.0
+
+# Database
+psycopg==3.2.9
+psycopg-binary==3.2.9
+
+# Redis for session management
+redis==5.0.0
+
+# Qdrant for vector search
+qdrant-client==1.12.0
+fastembed==0.3.1
+
+# Cohere for reranking (optional)
+cohere==5.5.0
+
+# Langfuse for observability (optional)
+langfuse==3.2.3
+
+# Additional utilities
+typing-extensions==4.14.1
+requests==2.31.0
+python-multipart
