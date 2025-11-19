@@ -2,6 +2,12 @@
 
 A standalone Conversational BI system that converts natural language questions into SQL queries using LangGraph, Azure OpenAI, and vector search. This system enables users to interact with databases using natural language, making data exploration accessible to non-technical users.
 
+## 🎥 Demo
+
+Watch ConvBI in action:
+
+https://github.com/user-attachments/assets/a3d85416-2896-40c3-ba22-159e9c221436
+
 ## 🎯 Features
 
 - **Natural Language to SQL**: Convert questions into SQL queries using Azure OpenAI
@@ -16,6 +22,8 @@ A standalone Conversational BI system that converts natural language questions i
 
 ## 📋 Table of Contents
 
+- [Demo](#-demo)
+- [Features](#-features)
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
